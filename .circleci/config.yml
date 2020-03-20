@@ -23,6 +23,8 @@ jobs:
     steps: #collection of executable commands
       - checkout
       - run: npm install
-      - run: npm test
+      - run: 
+          name: Run tests
+          command: npm test
 
 
