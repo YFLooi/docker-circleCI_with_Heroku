@@ -22,9 +22,10 @@ jobs:
       # - image: mongo:4.2.0 # and this image is the secondary service container
     steps: #collection of executable commands
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
+      - run: bundle install --path vendor/bundle #Bundle install dependencies
+      - run:
+          name: Run tests
+          command: rake
+       
 
 
