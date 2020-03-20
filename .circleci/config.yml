@@ -18,7 +18,7 @@ workflows:
               only: sequential-branch-filter
 
 jobs:
-  build: #runs without workflows use jobs-build as an entry point
+  build-and-test: #runs without workflows use jobs-build as an entry point
     working_directory: ~/circleCITut # name of root directory where steps will run
     docker: #steps to run with Docker
       - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
@@ -29,14 +29,4 @@ jobs:
       - run: 
           name: Run tests
           command: npm test
-    build-and-test:
-      executor:
-        name: node/default
-      steps:
-        - checkout
-        - node/with-cache:
-            steps:
-              - run: npm install
-              - run: npm test
-
 
