@@ -17,8 +17,9 @@ workflows:
             branches:
               only: sequential-branch-filter
 
+#github requires both 'build-and-test' and 'build' run before approving pull requests
 jobs:
-  build-and-test: #runs without workflows use jobs-build as an entry point
+  build-and-test: #runs with build-and-test workflow
     working_directory: ~/circleCITut # name of root directory where steps will run
     steps: #collection of executable commands
       - checkout
@@ -26,7 +27,7 @@ jobs:
       - run: 
           name: Run tests
           command: npm test
-  build: #runs without workflows use jobs-build as an entry point
+  build: #runs with heroku_deploy workflow
     working_directory: ~/circleCITut # name of root directory where steps will run
     docker: #steps to run with Docker
       - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
