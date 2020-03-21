@@ -2,7 +2,13 @@ workflows: #Defined set of rules for defining a collection of jobs and their run
   version: 2
   test-build-deploy:
     jobs:
+      - npm install
+      - npm test:
+          requires:
+            - npm install
       - deploy-dev:
+          requires:
+            - npm test #One follows the other?
           filters:
             branches:
               only: develop
