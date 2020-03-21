@@ -1,30 +1,42 @@
+#Source: https://circleci.com/docs/2.0/deployment-examples/#heroku
+version: 2.1 #allows CircleCI to point out version-specific errors
+
+orbs:
+  heroku: circleci/heroku@1.0.1 # Invoke the Heroku orb
+
 workflows: #Defined set of rules for defining a collection of jobs and their run order
-  version: 2
-  test-build-deploy:
+  build-and-test:
+      jobs:
+        - build-and-test
+  heroku_deploy:
     jobs:
-      - npm install
-      - npm test:
+      - build
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
           requires:
-            - npm install
-      - deploy-dev:
-          requires:
-            - npm test #One follows the other?
+            - build
           filters:
             branches:
-              only: develop
+              only: sequential-branch-filter
 
 #github requires both 'build-and-test' and 'build' run before approving pull requests
 jobs:
-  deploy-dev:
+  build-and-test: #runs with build-and-test workflow
+    working_directory: ~/circleCITut # name of root directory where steps will run
+    docker: #steps to run with Docker
+      - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
+    steps: #collection of executable commands
+      - checkout
+      - run: npm install
+      - run: 
+          name: Run tests
+          command: npm test
+  build: #runs with heroku_deploy workflow.
     working_directory: ~/circleCITut # name of root directory where steps will run
     docker: #steps to run with Docker
       - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
       # - image: mongo:4.2.0 # and this image is the secondary service container
-    machine: true
-    steps:
+    steps: #collection of executable commands.
       - checkout
-      - attach_workspace:
-          at: ~/circleCITut
       - run: npm install
       - run: 
           name: Run tests
