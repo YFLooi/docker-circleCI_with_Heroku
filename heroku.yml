@@ -1,5 +1,5 @@
 build:
   docker:
-    web: Dockerfile #must be in root together with heroku.yml
+    web: Dockerfile #must be in root together with heroku.yml =
 run:
   web: bundle exec puma -C config/puma.rb
