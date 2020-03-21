@@ -37,10 +37,13 @@ jobs:
       # - image: mongo:4.2.0 # and this image is the secondary service container
     steps: #collection of executable commands.
       - checkout
-      - run: npm install
+      - run: 
+          name: Install packages #literally the name of this step. Useful to indicate point in build
+          command: npm install 
       - run: 
           name: Run tests
           command: npm test
+      - setup_remote_docker
       - run: # From https://medium.com/nexton/deploying-docker-images-to-heroku-with-circleci-713c764e248d
           name: Build and push Docker image to Heroku
           command: |
