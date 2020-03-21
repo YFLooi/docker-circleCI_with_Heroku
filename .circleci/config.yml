@@ -1,34 +1,21 @@
-version: 2.1 #allows CircleCI to point out version-specific errors
+workflows: #Defined set of rules for defining a collection of jobs and their run order
+  version: 2
 
-orbs:
-  heroku: circleci/heroku@1.0.1 # Invoke the Heroku orb
-
-workflows:
-  build-and-test:
-      jobs:
-        - build-and-test
-  heroku_deploy:
+  test-build-deploy:
     jobs:
-      - build
-      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+      - npm
+      - test:
           requires:
-            - build
+            - npm 
+      - deploy-dev:
+          requires:
+            - test
           filters:
             branches:
-              only: sequential-branch-filter
+              only: develop
 
 #github requires both 'build-and-test' and 'build' run before approving pull requests
 jobs:
-  build-and-test: #runs with build-and-test workflow
-    working_directory: ~/circleCITut # name of root directory where steps will run
-    docker: #steps to run with Docker
-      - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
-    steps: #collection of executable commands
-      - checkout
-      - run: npm install
-      - run: 
-          name: Run tests
-          command: npm test
   build: #runs with heroku_deploy workflow.
     working_directory: ~/circleCITut # name of root directory where steps will run
     docker: #steps to run with Docker
@@ -36,8 +23,24 @@ jobs:
       # - image: mongo:4.2.0 # and this image is the secondary service container
     steps: #collection of executable commands.
       - checkout
+      - attach_workspace:
+          at: ~/repo
       - run: npm install
       - run: 
           name: Run tests
           command: npm test
-
+       - persist_to_workspace:
+          root: .
+          paths:
+            - .next
+  deploy-dev:
+      machine: true
+      steps:
+        - checkout
+        - run:
+            name: Build and push Docker image to Heroku
+            command: |
+              sudo curl https://cli-assets.heroku.com/install.sh | sh
+              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
+              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push -a circlecitest web
+              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release -a circlecitest web
