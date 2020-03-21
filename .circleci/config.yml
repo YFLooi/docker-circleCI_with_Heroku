@@ -9,7 +9,7 @@ workflows: #Defined set of rules for defining a collection of jobs and their run
             - npm 
       - deploy-dev:
           requires:
-            - test
+            - test #One follows the other?
           filters:
             branches:
               only: develop
@@ -24,7 +24,7 @@ jobs:
     steps: #collection of executable commands.
       - checkout
       - attach_workspace:
-          at: ~/repo
+          at: ~/circleCITut
       - run: npm install
       - run: 
           name: Run tests
