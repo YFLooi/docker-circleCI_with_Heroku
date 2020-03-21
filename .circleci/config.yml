@@ -43,7 +43,7 @@ jobs:
       - run: 
           name: Run tests
           command: npm test
-      - setup_remote_docker
+      - setup_remote_docker #Removes need for Docker daemon. Prevents error on CircleCI build process: Cannot connect to the Docker daemon at unix:///var
       - run: # From https://medium.com/nexton/deploying-docker-images-to-heroku-with-circleci-713c764e248d
           name: Build and push Docker image to Heroku
           command: |

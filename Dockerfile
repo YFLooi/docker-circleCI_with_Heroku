@@ -1,4 +1,4 @@
-#Start from the pre-existing official Node image (v6.11.5)
+#Start from the pre-existing official DOcker Node image (v6.11.5)
 #MANDATORY!
 FROM node:6.11.5
 #Specifies directory for all subsequent actions in image filesystem (never host's filesystem)
