@@ -30,10 +30,6 @@ jobs:
       - run: 
           name: Run tests
           command: npm test
-       - persist_to_workspace:
-          root: .
-          paths:
-            - .next
       - run:
           name: Build and push Docker image to Heroku
           command: |
