@@ -1,6 +1,5 @@
-version: 2
-
 workflows: #Defined set of rules for defining a collection of jobs and their run order
+  version: 2
   test-build-deploy:
     jobs:
       - npm
