@@ -1,6 +1,6 @@
-workflows: #Defined set of rules for defining a collection of jobs and their run order
-  version: 2
+version: 2
 
+workflows: #Defined set of rules for defining a collection of jobs and their run order
   test-build-deploy:
     jobs:
       - npm
@@ -16,12 +16,13 @@ workflows: #Defined set of rules for defining a collection of jobs and their run
 
 #github requires both 'build-and-test' and 'build' run before approving pull requests
 jobs:
-  build: #runs with heroku_deploy workflow.
+  deploy-dev:
     working_directory: ~/circleCITut # name of root directory where steps will run
     docker: #steps to run with Docker
       - image: circleci/node:9.9.0 # This image as the primary container; this is where all `steps` will run
       # - image: mongo:4.2.0 # and this image is the secondary service container
-    steps: #collection of executable commands.
+    machine: true
+    steps:
       - checkout
       - attach_workspace:
           at: ~/circleCITut
@@ -33,14 +34,10 @@ jobs:
           root: .
           paths:
             - .next
-  deploy-dev:
-      machine: true
-      steps:
-        - checkout
-        - run:
-            name: Build and push Docker image to Heroku
-            command: |
-              sudo curl https://cli-assets.heroku.com/install.sh | sh
-              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
-              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push -a circlecitest web
-              HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release -a circlecitest web
+      - run:
+          name: Build and push Docker image to Heroku
+          command: |
+            sudo curl https://cli-assets.heroku.com/install.sh | sh
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push -a circlecitest web
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release -a circlecitest web
